@@ -1,0 +1,26 @@
+from time import sleep
+
+import pytest
+from pages.home_page import HomePage
+
+def test_main_page(checking_main_page):
+    checking_main_page.open()
+    checking_main_page.checking_the_main_page_logo()
+    checking_main_page.checking_login_text_field()
+    checking_main_page.checking_password_text_field()
+    checking_main_page.checking_header_of_list_of_users()
+    checking_main_page.checking_list_of_users()
+    checking_main_page.checking_header_of_list_of_password()
+    checking_main_page.checking_list_of_password()
+    checking_main_page.checking_empty_error()
+
+def test_main_page_errors(checking_main_page, wrong_username):
+    checking_main_page.open()
+    checking_main_page.click_login_button()
+    checking_main_page.checking_error_of_empty_username()
+    checking_main_page.open()
+    checking_main_page.enter_username(wrong_username)
+    checking_main_page.click_login_button()
+    checking_main_page.checking_error_of_empty_password()
+
+

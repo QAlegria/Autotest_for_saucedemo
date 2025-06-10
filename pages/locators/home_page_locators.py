@@ -1,0 +1,12 @@
+class HomePageLocators:
+    main_page_logo = '.login_logo'
+    username_field = '#user-name'
+    password_field = '#password'
+    header_of_login_field = '.login_credentials h4'
+    list_of_login_field = '.login_credentials'
+    header_of_password_field = '.login_password h4'
+    list_of_password_field = '.login_password'
+    login_button = '.submit-button'
+    error_empty_field = '.error-message-container'
+    error_field = '.error-message-container.error'
+    error_icon = '.error_icon'
