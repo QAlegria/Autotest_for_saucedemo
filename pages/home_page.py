@@ -76,6 +76,24 @@ class HomePage(BasePage):
         expect(error_icon).to_have_count(2)
         self.expect_visible(error_icon)
 
+    def checking_error_of_invalid_credentials(self):
+        error_field = self.find(Locators.error_field)
+        error_icon = self.find(Locators.error_icon)
+        expect(error_field).to_be_visible()
+        expect(error_field).to_contain_text(Parameters.invalid_credentials_text)
+        expect(error_field).to_have_css('background-color', Parameters.error_color)
+        expect(error_icon).to_have_count(2)
+        self.expect_visible(error_icon)
+
+    def checking_username_is_written(self, username):
+        username_field = self.find(Locators.username_field)
+        expect(username_field).to_be_visible()
+        expect(username_field).to_have_attribute('value', username)
+
+    def checking_password_is_written(self, password):
+        password_field = self.find(Locators.password_field)
+        expect(password_field).to_be_visible()
+        expect(password_field).to_have_attribute('value', password)
 
     def click_login_button(self):
         self.find(Locators.login_button).click()
@@ -89,3 +107,6 @@ class HomePage(BasePage):
         password_field = self.find(Locators.password_field)
         password_field.click()
         password_field.fill(password)
+
+    def checking_new_page_after_login(self):
+        expect(self.page).to_have_url(Parameters.new_page_url)
