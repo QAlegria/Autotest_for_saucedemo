@@ -3,12 +3,14 @@ from playwright.sync_api import sync_playwright
 
 from pages.base_page import BasePage
 from pages.locators.home_page_locators import HomePageLocators as Locators
-from pages.parameters.home_page_parametrs import HomePageParameters as Parameters
+from pages.parameters.home_page_parameters import HomePageParameters as Parameters
+from utils.expect_visible_helpers import ExpectVisibleElements
+from config import setting
 
 
 class HomePage(BasePage):
     base_url = Parameters.base_url
-    page_url = Parameters.page_url
+    page_url = setting.HOME_PAGE_URL
 
     def checking_the_main_page_logo(self):
         main_page_logo = self.find(Locators.main_page_logo)
@@ -65,7 +67,7 @@ class HomePage(BasePage):
         expect(error_field).to_contain_text(Parameters.empty_username_error_text)
         expect(error_field).to_have_css('background-color', Parameters.error_color)
         expect(error_icon).to_have_count(2)
-        self.expect_visible(error_icon)
+        ExpectVisibleElements.expect_visible_elements(error_icon)
 
     def checking_error_of_empty_password(self):
         error_field = self.find(Locators.error_field)
@@ -74,7 +76,7 @@ class HomePage(BasePage):
         expect(error_field).to_contain_text(Parameters.empty_password_error_text)
         expect(error_field).to_have_css('background-color', Parameters.error_color)
         expect(error_icon).to_have_count(2)
-        self.expect_visible(error_icon)
+        ExpectVisibleElements.expect_visible_elements(error_icon)
 
     def checking_error_of_invalid_credentials(self):
         error_field = self.find(Locators.error_field)
@@ -83,7 +85,7 @@ class HomePage(BasePage):
         expect(error_field).to_contain_text(Parameters.invalid_credentials_text)
         expect(error_field).to_have_css('background-color', Parameters.error_color)
         expect(error_icon).to_have_count(2)
-        self.expect_visible(error_icon)
+        ExpectVisibleElements.expect_visible_elements(error_icon)
 
     def checking_username_is_written(self, username):
         username_field = self.find(Locators.username_field)
@@ -109,4 +111,4 @@ class HomePage(BasePage):
         password_field.fill(password)
 
     def checking_new_page_after_login(self):
-        expect(self.page).to_have_url(Parameters.new_page_url)
+        expect(self.page).to_have_url(setting.INVENTORY_PAGE_URL)

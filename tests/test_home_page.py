@@ -3,7 +3,7 @@ from time import sleep
 import pytest
 from pages.home_page import HomePage
 
-def test_main_page(checking_main_page):
+def test_main_page_objects(checking_main_page):
     checking_main_page.open()
     checking_main_page.checking_the_main_page_logo()
     checking_main_page.checking_login_text_field()
@@ -51,3 +51,5 @@ def test_main_page_standard_user_login(checking_main_page,standard_user,valid_pa
     checking_main_page.enter_password(valid_password)
     checking_main_page.click_login_button()
     checking_main_page.checking_new_page_after_login()
+
+
