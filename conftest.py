@@ -52,4 +52,5 @@ def invalid_password():
 
 @pytest.fixture()
 def get_image_api():
-    ImageApi()
+    return ImageApi()
+
