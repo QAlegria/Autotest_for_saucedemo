@@ -1,11 +1,12 @@
 from playwright.sync_api import expect
-
 from pages.base_page import BasePage
 from pages.parameters.inventory_page_parameters import InventoryPageParameters as Parameters
 from pages.locators.inventory_page_locators import InventoryPageLocators as Locators
 from utils.image_checker import ImageChecker
 from utils.json_worker import JsonWorker
 from config import setting
+from utils.helpers import PriceHelper
+
 
 class InventoryPage(BasePage):
 
@@ -50,24 +51,60 @@ class InventoryPage(BasePage):
         expect(header_of_product_title).to_be_visible()
         expect(header_of_product_title).to_have_text(Parameters.header_of_product_title_text)
 
-    def checking_first_product_card_image(self):
-        product_image = self.find(Locators.product_image).nth(0)
-        expect(product_image).to_be_visible()
-        product_name = product_image.get_attribute('alt')
-        product_image_url = product_image.get_attribute('src')
-        product_json_filter = JsonWorker()
-        product_json_filter.open_file(setting.JSON_DIR)
-        product_items_for_image = product_json_filter.get_product_by_conditions(name = product_name, image_url = product_image_url)
-        assert product_items_for_image
+    # def checking_first_product_card_image(self):
+    #     product_image = self.find(Locators.product_image).nth(0)
+    #     expect(product_image).to_be_visible()
+    #     product_name = product_image.get_attribute('alt')
+    #     product_image_url = product_image.get_attribute('src')
+    #     product_json_filter = JsonWorker()
+    #     product_json_filter.open_file(setting.JSON_DIR)
+    #     product_items_for_image = product_json_filter.get_product_by_conditions(name = product_name, image_url = product_image_url)
+    #     assert product_items_for_image
+    #
+    # def checking_first_product_card_name_and_description(self):
+    #     product_name_header = self.find(Locators.product_name_header).nth(0)
+    #     product_description = self.find(Locators.product_description).nth(0)
+    #     expect(product_name_header).to_be_visible()
+    #     expect(product_description).to_be_visible()
+    #     header_name = product_name_header.inner_text()
+    #     description = product_description.inner_text()
+    #     product_json_filter = JsonWorker()
+    #     product_json_filter.open_file(setting.JSON_DIR)
+    #     product_items_for_name = product_json_filter.get_product_by_conditions(name=header_name, description=description)
+    #     assert product_items_for_name
+    #
+    # def checking_first_product_card_price(self):
+    #     product_price = self.find(Locators.product_price).nth(0)
+    #     expect(product_price).to_be_visible()
+    #     price_text = product_price.inner_text()
+    #     price = PriceHelper.get_price(price_text)
+    #     currency = PriceHelper.get_currency(price_text)
+    #     product_json_filter = JsonWorker()
+    #     product_json_filter.open_file(setting.JSON_DIR)
+    #     product_items_for_price = product_json_filter.get_product_by_conditions(price = price, currency = currency)
+    #     assert product_items_for_price
 
-    def checking_first_product_card_name_and_description(self):
+    def checking_first_product(self):
         product_name_header = self.find(Locators.product_name_header).nth(0)
         product_description = self.find(Locators.product_description).nth(0)
+        product_image = self.find(Locators.product_image).nth(0)
+        product_price = self.find(Locators.product_price).nth(0)
         expect(product_name_header).to_be_visible()
         expect(product_description).to_be_visible()
+        expect(product_image).to_be_visible()
+        expect(product_price).to_be_visible()
+        product_name = product_image.get_attribute('alt')
+        product_image_url = product_image.get_attribute('src')
         header_name = product_name_header.inner_text()
+        assert product_name == header_name
         description = product_description.inner_text()
+        price_text = product_price.inner_text()
+        price = PriceHelper.get_price(price_text)
+        currency = PriceHelper.get_currency(price_text)
         product_json_filter = JsonWorker()
         product_json_filter.open_file(setting.JSON_DIR)
-        product_items_for_name = product_json_filter.get_product_by_conditions(name=header_name, description=description)
+        product_items_for_name = product_json_filter.get_product_by_conditions(name=header_name, description=description, image_url = product_image_url, price = price, currency = currency)
         assert product_items_for_name
+
+    def checking_requests_of_products_image(self, url):
+        self.network.was_url_requested(url)

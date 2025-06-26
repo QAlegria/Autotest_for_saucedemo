@@ -1,55 +1,59 @@
-from time import sleep
-
-import pytest
-from pages.home_page import HomePage
-
-def test_main_page_objects(checking_main_page):
-    checking_main_page.open()
-    checking_main_page.checking_the_main_page_logo()
-    checking_main_page.checking_login_text_field()
-    checking_main_page.checking_password_text_field()
-    checking_main_page.checking_header_of_list_of_users()
-    checking_main_page.checking_list_of_users()
-    checking_main_page.checking_header_of_list_of_password()
-    checking_main_page.checking_list_of_password()
-    checking_main_page.checking_empty_error()
+from config import setting
+from pages.parameters.home_page_parameters import HomePageParameters as Parameters
 
 
-def test_main_page_empty_field_errors(checking_main_page, wrong_username):
-    checking_main_page.open()
-    checking_main_page.click_login_button()
-    checking_main_page.checking_error_of_empty_username()
-    checking_main_page.open()
-    checking_main_page.enter_username(wrong_username)
-    checking_main_page.click_login_button()
-    checking_main_page.checking_error_of_empty_password()
+
+def test_main_page_default_state(main_page):
+    main_page.open()
+    main_page.main_page_logo_has_text(Parameters.home_page_header)
+    main_page.username_text_field_is_displayed()
+    main_page.password_text_field_is_displayed()
+    main_page.header_of_list_of_users_has_text(Parameters.username_header)
+    main_page.list_of_users_match_with(Parameters.expected_list_of_logins)
+    main_page.header_of_accepted_list_of_password_has_text(Parameters.password_header)
+    main_page.list_of_password_match_with(Parameters.expected_passwords)
+    main_page.empty_error_field_is_displayed()
 
 
-def test_main_page_invalid_username(checking_main_page,wrong_username, valid_password):
-    checking_main_page.open()
-    checking_main_page.enter_username(wrong_username)
-    checking_main_page.checking_username_is_written(wrong_username)
-    checking_main_page.enter_password(valid_password)
-    checking_main_page.checking_password_is_written(valid_password)
-    checking_main_page.click_login_button()
-    checking_main_page.checking_error_of_invalid_credentials()
+def test_main_page_empty_field_errors(main_page, wrong_username):
+    main_page.open()
+    main_page.click_login_button()
+    main_page.checking_error_of_empty_username(Parameters.empty_username_error_text)
+    main_page.error_icons_is_displayed()
+    main_page.open()
+    main_page.enter_username(wrong_username)
+    main_page.click_login_button()
+    main_page.error_of_empty_password_has_text(Parameters.empty_password_error_text)
+    main_page.error_icons_is_displayed()
 
 
-def test_main_page_invalid_password(checking_main_page,standard_user, invalid_password):
-    checking_main_page.open()
-    checking_main_page.enter_username(standard_user)
-    checking_main_page.checking_username_is_written(standard_user)
-    checking_main_page.enter_password(invalid_password)
-    checking_main_page.checking_password_is_written(invalid_password)
-    checking_main_page.click_login_button()
-    checking_main_page.checking_error_of_invalid_credentials()
+def test_main_page_invalid_username(main_page, wrong_username, valid_password):
+    main_page.open()
+    main_page.enter_username(wrong_username)
+    main_page.username_text_field_has_value(wrong_username)
+    main_page.enter_password(valid_password)
+    main_page.password_text_field_has_value(valid_password)
+    main_page.click_login_button()
+    main_page.error_of_invalid_credentials_has_text(Parameters.invalid_credentials_text)
+    main_page.error_icons_is_displayed()
 
 
-def test_main_page_standard_user_login(checking_main_page,standard_user,valid_password):
-    checking_main_page.open()
-    checking_main_page.enter_username(standard_user)
-    checking_main_page.enter_password(valid_password)
-    checking_main_page.click_login_button()
-    checking_main_page.checking_new_page_after_login()
+def test_main_page_invalid_password(main_page, standard_user, invalid_password):
+    main_page.open()
+    main_page.enter_username(standard_user)
+    main_page.username_text_field_has_value(standard_user)
+    main_page.enter_password(invalid_password)
+    main_page.password_text_field_has_value(invalid_password)
+    main_page.click_login_button()
+    main_page.error_of_invalid_credentials_has_text(Parameters.invalid_credentials_text)
+    main_page.error_icons_is_displayed()
+
+
+def test_main_page_standard_user_login(main_page, standard_user, valid_password):
+    main_page.open()
+    main_page.enter_username(standard_user)
+    main_page.enter_password(valid_password)
+    main_page.click_login_button()
+    main_page.new_page_after_login_has_url(setting.INVENTORY_PAGE_URL)
 
 

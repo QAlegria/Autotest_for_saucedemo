@@ -5,14 +5,14 @@ from pages.inventory_page import InventoryPage
 from faker import Faker
 from pages.base_page import BasePage
 from pages.locators.home_page_locators import HomePageLocators
-from utils.expect_visible_helpers import ExpectVisibleElements
 from pages.parameters.credentials import Password, StandardUser
 from api.image_api import ImageApi
 from config import setting
+from utils.network import NetworkWatcher
 
 
 @pytest.fixture()
-def checking_main_page(page):
+def main_page(page):
     return HomePage(page)
 
 # Is this correct?
@@ -22,12 +22,19 @@ def auth_session_with_standard_user(page:Page):
     page.fill(HomePageLocators.username_field, StandardUser.standard_username)
     page.fill(HomePageLocators.password_field, Password.password)
     page.click(HomePageLocators.login_button)
+    network = NetworkWatcher(page)
     page.wait_for_url(f'**{setting.INVENTORY_PAGE_URL}')
     return page
 
 @pytest.fixture()
-def checking_inventory_page(auth_session_with_standard_user):
-    return InventoryPage(auth_session_with_standard_user)
+def inventory_page_standard_user(page:Page):
+    page.goto(BasePage.base_url)
+    page.fill(HomePageLocators.username_field, StandardUser.standard_username)
+    page.fill(HomePageLocators.password_field, Password.password)
+    page.click(HomePageLocators.login_button)
+    network = NetworkWatcher(page)
+    page.wait_for_url(f'**{setting.INVENTORY_PAGE_URL}')
+    return InventoryPage(page, network)
 
 
 @pytest.fixture()
