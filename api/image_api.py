@@ -7,7 +7,7 @@ class ImageApi:
         self.response_body_text = None
 
 
-    def get_image_request(self, image_name):
+    def get_image_request_with_image_name(self, image_name):
         response = requests.get(
             f'{self.image_url}{image_name}',
             headers={'Content-type': 'image/svg+xml'}
@@ -16,6 +16,6 @@ class ImageApi:
         self.response_body_text = response.text
         return response
 
-    def checking_response_body(self):
+    def checking_svg_response_body(self):
         assert self.response_body_text.startswith('<svg')
         assert self.response_body_text.endswith('</svg>')

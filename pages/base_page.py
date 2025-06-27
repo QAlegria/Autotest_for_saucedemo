@@ -27,6 +27,9 @@ class BasePage:
     def find(self, locator) -> Locator:
         return self.page.locator(locator)
 
+    def find_by_index(self, locator, index) -> Locator:
+        return self.find(locator).nth(index)
+
     def check_visibility_and_text(self, element, expected_text):
         expect(element).to_be_visible()
         expect(element).to_have_text(expected_text)
@@ -38,3 +41,8 @@ class BasePage:
     def check_visibility_and_attribute(self, element, attribute_name, attribute_value):
         expect(element).to_be_visible()
         expect(element).to_have_attribute(attribute_name, attribute_value)
+
+    def check_element_image_link(self, element, image_name):
+        image_link_from_element = element.evaluate("element => getComputedStyle(element).backgroundImage")
+        expected_image_link = f'{setting.STATIC_IMAGE_URL}{image_name}'
+        assert expected_image_link in image_link_from_element,"Mismatch between expected_image_link and image_link_from_element from page"

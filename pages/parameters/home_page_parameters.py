@@ -13,3 +13,4 @@ class HomePageParameters:
     empty_username_error_text = 'Epic sadface: Username is required'
     empty_password_error_text = 'Epic sadface: Password is required'
     invalid_credentials_text = 'Epic sadface: Username and password do not match any user in this service'
+    locked_out_user_error_text = 'Epic sadface: Sorry, this user has been locked out.'
