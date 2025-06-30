@@ -1,10 +1,10 @@
-from playwright.sync_api import expect
+from playwright.sync_api import expect, BrowserContext
 from pages.base_page import BasePage
 from pages.parameters.inventory_page_parameters import InventoryPageParameters as Parameters
 from pages.locators.inventory_page_locators import InventoryPageLocators as Locators
 from utils.json_worker import JsonWorker
 from config import setting
-from utils.helpers import PriceHelper
+from utils.helpers import PriceHelper, ProductSort
 
 
 class InventoryPage(BasePage):
@@ -84,15 +84,12 @@ class InventoryPage(BasePage):
     def click_reset_button(self):
         self.reset_button.click()
 
-    @property
-    def product_filter(self):
-        return self.find(Locators.product_filter)
 
-    def filter_is_displayed(self):
-        expect(self.product_filter).to_be_visible()
+    def sort_is_displayed(self):
+        expect(self.product_sort).to_be_visible()
 
-    def click_filter(self):
-        self.product_filter.click()
+    def click_sort(self):
+        self.product_sort.click()
 
     @property
     def header_of_product_title(self):
@@ -100,6 +97,58 @@ class InventoryPage(BasePage):
 
     def header_of_product_title_has_text(self, text):
         self.check_visibility_and_text(self.header_of_product_title, text)
+
+    @property
+    def all_product_names(self):
+        return self.find(Locators.product_name_header)
+
+    def get_list_of_product_names(self):
+        return self.all_product_names.all_inner_texts()
+
+    def check_products_is_a_to_z_sorted(self):
+        assert ProductSort.a_to_z_sort(self.get_list_of_product_names()), f"{self.get_list_of_product_names()}\n Products on page isn't A to Z sorted"
+
+    def check_products_is_z_to_a_sorted(self):
+        assert ProductSort.z_to_a_sort(self.get_list_of_product_names()), f"{self.get_list_of_product_names()}\n Products on page isn't Z to A sorted"
+
+    @property
+    def all_product_prices(self):
+        return self.find(Locators.product_price)
+
+    def get_list_of_product_prices(self):
+        print(PriceHelper.get_float_prices(self.all_product_prices.all_inner_texts()))
+        return PriceHelper.get_float_prices(self.all_product_prices.all_inner_texts())
+
+    def check_low_to_high_products_sort(self):
+        assert ProductSort.low_to_high_sort(self.get_list_of_product_prices())
+
+    def check_high_to_low_products_sort(self):
+        assert ProductSort.high_to_low_sort(self.get_list_of_product_prices())
+
+    # Working with sort selector
+    @property
+    def product_sort(self):
+        return self.find(Locators.product_sort)
+
+    def click_product_sort(self):
+        self.product_sort.click()
+
+    def select_a_to_z_sort(self):
+        self.product_sort.select_option(Locators.az_sort_selector)
+
+    def select_z_to_a_sort(self):
+        self.product_sort.select_option(Locators.za_sort_selector)
+
+    def select_low_to_high_sort(self):
+        self.product_sort.select_option(Locators.low_to_high_sort_selector)
+
+    def select_high_to_low_sort(self):
+        self.product_sort.select_option(Locators.high_to_low_sort_selector)
+
+
+
+
+    # Searching product elements by index:
 
     def product_name_header_by_index(self, index):
         return self.find_by_index(Locators.product_name_header, index)
@@ -149,6 +198,12 @@ class InventoryPage(BasePage):
     def get_product_currency_by_index(self, index):
         return PriceHelper.get_currency(self.get_product_price_and_currency_text_by_index(index))
 
+    def add_to_cart_element(self, index):
+        return self.find_by_index(Locators.button_add_to_cart, index)
+
+    def add_to_cart_by_index_is_displayed(self, index):
+        self.check_visibility_and_text(self.add_to_cart_element(index), Parameters.add_to_cart)
+
     def check_product_by_index_is_in_json(self, index, json):
         product_json_filter = JsonWorker()
         product_json_filter.open_file(json)
@@ -158,7 +213,56 @@ class InventoryPage(BasePage):
             image_url = self.get_product_image_url_by_index(index),
             price = self.get_product_price_by_index(index),
             currency = self.get_product_currency_by_index(index))
-        assert product_items_for_name,"Mismatch between product on page and product in JSON"
+        assert product_items_for_name,(f"Mismatch between product on page\n {self.get_product_name_by_index(index)}\n"
+                                       f"{self.get_product_description_by_index(index)}\n ,"
+                                       f"{self.get_product_image_url_by_index(index)}\n ,"
+                                       f"{self.get_product_price_by_index(index)}\n ,"
+                                       f"{self.get_product_currency_by_index(index)}\n and product in JSON")
 
-    def checking_requests_of_products_image(self, url):
-        self.network.was_url_requested(url)
+    def check_was_request_of_product_image_called_by_index(self, index):
+        url = self.get_product_image_url_by_index(index)
+        assert self.network.was_url_requested(url=url), 'The specified request was not requested'
+
+    @property
+    def twitter_element(self):
+        return self.find(Locators.twitter_logo_link)
+
+    def twitter_is_displayed(self):
+        self.check_visibility_and_attribute(self.twitter_element, 'href', setting.TWITTER_LINK)
+
+    def click_and_check_twitter_is_opened(self):
+        twitter_page = self.open_new_tab_with_click(self.twitter_element)
+        twitter_page.wait_for_url(setting.X_TWITTER_LINK)
+
+
+    @property
+    def facebook_element(self):
+        return self.find(Locators.facebook_logo_link)
+
+    def facebook_is_displayed(self):
+        self.check_visibility_and_attribute(self.facebook_element, 'href', setting.FACEBOOK_LINK)
+
+    def click_and_check_facebook_is_opened(self):
+        facebook_page = self.open_new_tab_with_click(self.facebook_element)
+        facebook_page.wait_for_url(setting.FACEBOOK_LINK)
+
+    @property
+    def linkedin_element(self):
+        return self.find(Locators.linkedin_logo_link)
+
+    def linkedin_is_displayed(self):
+        self.check_visibility_and_attribute(self.linkedin_element, 'href', setting.LINKEDIN_LINK)
+
+    def click_and_check_linkedin_is_opened(self):
+        linkedin_page = self.open_new_tab_with_click(self.linkedin_element)
+        linkedin_page.wait_for_url(setting.LINKEDIN_LINK)
+
+
+    @property
+    def terms_footer(self):
+        return self.find(Locators.terms_footer)
+
+    def terms_footer_is_displayed(self):
+        self.check_visibility_and_text(self.terms_footer, Parameters.terms_footer_text)
+
+

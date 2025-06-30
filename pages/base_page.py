@@ -7,7 +7,7 @@ from config import setting
 from pages.locators.home_page_locators import HomePageLocators as Locators
 from pages.parameters.home_page_parameters import HomePageParameters as Parameters
 from utils.network import NetworkWatcher
-from typing import Optional
+from typing import Optional, Literal
 
 
 class BasePage:
@@ -24,11 +24,22 @@ class BasePage:
         else:
             raise NotImplementedError('Page cannot be opened by this url')
 
-    def find(self, locator) -> Locator:
-        return self.page.locator(locator)
+    def find(self, selector) -> Locator:
+        return self.page.locator(selector)
 
     def find_by_index(self, locator, index) -> Locator:
         return self.find(locator).nth(index)
+
+    def open_new_tab_with_click(self, locator, wait_state: Literal["load", "domcontentloaded", "networkidle"] = "load"):
+        with self.page.context.expect_page() as new_tab_info:
+            locator.click()
+        new_page = new_tab_info.value
+        new_page.wait_for_load_state(wait_state)
+        return new_page
+
+    # def list_of_elements(self, elements: Locator):
+    #     count = elements.count()
+    #     return [elements.nth(count).inner_text() for i in range(count)]
 
     def check_visibility_and_text(self, element, expected_text):
         expect(element).to_be_visible()
@@ -45,4 +56,7 @@ class BasePage:
     def check_element_image_link(self, element, image_name):
         image_link_from_element = element.evaluate("element => getComputedStyle(element).backgroundImage")
         expected_image_link = f'{setting.STATIC_IMAGE_URL}{image_name}'
-        assert expected_image_link in image_link_from_element,"Mismatch between expected_image_link and image_link_from_element from page"
+        assert expected_image_link in image_link_from_element,f"Mismatch between expected_image_link {expected_image_link} and image_link_from_element {image_link_from_element} from page"
+
+    def check_static_image_request(self, method, image_name):
+        self.network.check_image_response_body_by_method_url(method, image_name)

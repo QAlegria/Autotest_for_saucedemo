@@ -31,8 +31,9 @@ def inventory_page_with_standard_user(page:Page):
     page.goto(BasePage.base_url)
     page.fill(HomePageLocators.username_field, StandardUser.standard_username)
     page.fill(HomePageLocators.password_field, Password.password)
-    page.click(HomePageLocators.login_button)
     network = NetworkWatcher(page)
+    network.start_tracking()
+    page.click(HomePageLocators.login_button)
     page.wait_for_url(f'**{setting.INVENTORY_PAGE_URL}')
     return InventoryPage(page, network)
 
