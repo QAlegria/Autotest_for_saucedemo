@@ -35,8 +35,12 @@ def inventory_page_with_standard_user(page:Page):
     network.start_tracking()
     page.click(HomePageLocators.login_button)
     page.wait_for_url(f'**{setting.INVENTORY_PAGE_URL}')
+    page.wait_for_load_state("load")
     return InventoryPage(page, network)
 
+@pytest.fixture()
+def count_products():
+    return ImageApi()
 
 @pytest.fixture()
 def wrong_username():
@@ -80,4 +84,5 @@ def invalid_password():
 @pytest.fixture()
 def get_image_api():
     return ImageApi()
+
 

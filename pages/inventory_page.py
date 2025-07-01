@@ -1,10 +1,12 @@
+from functools import cached_property
+
 from playwright.sync_api import expect, BrowserContext
 from pages.base_page import BasePage
 from pages.parameters.inventory_page_parameters import InventoryPageParameters as Parameters
 from pages.locators.inventory_page_locators import InventoryPageLocators as Locators
 from utils.json_worker import JsonWorker
 from config import setting
-from utils.helpers import PriceHelper, ProductSort
+from utils.helpers import PriceHelper, ProductSort, RandomItems
 
 
 class InventoryPage(BasePage):
@@ -16,6 +18,8 @@ class InventoryPage(BasePage):
     def inventory_page_logo_is_displayed_and_has_text(self, text):
         self.check_visibility_and_text(self.inventory_page_logo, text)
 
+
+    # Working with shopping cart
     @property
     def shopping_cart_image(self):
         return self.find(Locators.shopping_cart)
@@ -26,7 +30,28 @@ class InventoryPage(BasePage):
     def shopping_cart_image_is_on_page(self):
         self.check_element_image_link(self.shopping_cart_image,Parameters.shopping_card_image_name)
 
+    @property
+    def shopping_cart_counter(self):
+        return self.find(Locators.shopping_cart_counter)
 
+    def check_product_counter_icon_is(self, count):
+        self.check_visibility_and_text(self.shopping_cart_counter, str(count))
+
+    def check_product_counter_icon_is_equals_random_selected_products(self):
+        self.check_visibility_and_text(self.shopping_cart_counter, str(self.get_random_times_for_add_iteration))
+
+    def check_product_counter_icon_is_equals_selected_minus_removed_products(self):
+        if self.get_random_times_for_add_iteration - self.get_random_times_for_remove_iteration == 0:
+            self.check_product_counter_icon_is_not_displayed()
+        else:
+            self.check_visibility_and_text(self.shopping_cart_counter, str(self.get_random_times_for_add_iteration-self.get_random_times_for_remove_iteration))
+
+    def check_product_counter_icon_is_not_displayed(self):
+        expect(self.shopping_cart_counter).not_to_be_attached()
+
+
+
+    # Working with left menu
     @property
     def left_menu_button(self):
         return self.find(Locators.left_menu_button)
@@ -98,6 +123,10 @@ class InventoryPage(BasePage):
     def header_of_product_title_has_text(self, text):
         self.check_visibility_and_text(self.header_of_product_title, text)
 
+
+
+    # Working with product cards
+
     @property
     def all_product_names(self):
         return self.find(Locators.product_name_header)
@@ -116,14 +145,15 @@ class InventoryPage(BasePage):
         return self.find(Locators.product_price)
 
     def get_list_of_product_prices(self):
-        print(PriceHelper.get_float_prices(self.all_product_prices.all_inner_texts()))
         return PriceHelper.get_float_prices(self.all_product_prices.all_inner_texts())
 
     def check_low_to_high_products_sort(self):
-        assert ProductSort.low_to_high_sort(self.get_list_of_product_prices())
+        assert ProductSort.low_to_high_sort(self.get_list_of_product_prices()), f"{self.get_list_of_product_prices()}\n Products on page isn't A to Z sorted"
 
     def check_high_to_low_products_sort(self):
         assert ProductSort.high_to_low_sort(self.get_list_of_product_prices())
+
+
 
     # Working with sort selector
     @property
@@ -144,7 +174,6 @@ class InventoryPage(BasePage):
 
     def select_high_to_low_sort(self):
         self.product_sort.select_option(Locators.high_to_low_sort_selector)
-
 
 
 
@@ -198,12 +227,6 @@ class InventoryPage(BasePage):
     def get_product_currency_by_index(self, index):
         return PriceHelper.get_currency(self.get_product_price_and_currency_text_by_index(index))
 
-    def add_to_cart_element(self, index):
-        return self.find_by_index(Locators.button_add_to_cart, index)
-
-    def add_to_cart_by_index_is_displayed(self, index):
-        self.check_visibility_and_text(self.add_to_cart_element(index), Parameters.add_to_cart)
-
     def check_product_by_index_is_in_json(self, index, json):
         product_json_filter = JsonWorker()
         product_json_filter.open_file(json)
@@ -223,6 +246,60 @@ class InventoryPage(BasePage):
         url = self.get_product_image_url_by_index(index)
         assert self.network.was_url_requested(url=url), 'The specified request was not requested'
 
+
+
+    # Button add to cart
+    @property
+    def get_product_add_btn_count(self) -> int:
+        return self.find(Locators.button_add_to_cart).count()
+
+    def add_to_cart_element(self, index):
+        return self.find_by_index(Locators.button_add_to_cart, index)
+
+    def button_add_to_cart_by_index_is_displayed(self, index):
+        self.check_visibility_and_text(self.add_to_cart_element(index), Parameters.add_to_cart)
+
+    def click_button_add_to_card_product_by_index(self, index):
+        self.add_to_cart_element(index).click()
+
+    # Button remove from cart
+    @property
+    def get_product_remove_from_cart_btn_count(self) -> int:
+        return self.find(Locators.button_to_remove_from_cart).count()
+
+    def remove_from_cart_element(self, index):
+        return self.find_by_index(Locators.button_to_remove_from_cart, index)
+
+    def button_remove_from_cart_by_index_is_displayed(self, index):
+        self.check_visibility_and_text(self.remove_from_cart_element(index), Parameters.remove_from_cart)
+
+    def click_button_remove_from_cart_product_by_index(self, index):
+        self.remove_from_cart_element(index).click()
+
+    # Working with RandomItems
+    @cached_property
+    def get_random_times_for_add_iteration(self):
+        return RandomItems.get_random_count(self.get_product_add_btn_count)
+
+    def add_one_random_product_to_cart(self):
+        RandomItems.select_one_random_item(self.get_product_add_btn_count, self.click_button_add_to_card_product_by_index)
+
+    def add_random_products_to_cart(self):
+        return RandomItems.repeat_random_amount_once_each(self.get_random_times_for_add_iteration, self.add_one_random_product_to_cart)
+
+    @cached_property
+    def get_random_times_for_remove_iteration(self):
+        return RandomItems.get_random_count(self.get_random_times_for_add_iteration)
+
+    def remove_one_random_product_from_cart(self):
+        RandomItems.select_one_random_item(self.get_product_remove_from_cart_btn_count, self.click_button_remove_from_cart_product_by_index)
+
+    def remove_random_products_from_cart(self):
+        return RandomItems.repeat_random_amount_once_each(self.get_random_times_for_remove_iteration, self.remove_one_random_product_from_cart)
+
+
+
+    # Social media and terms elements
     @property
     def twitter_element(self):
         return self.find(Locators.twitter_logo_link)

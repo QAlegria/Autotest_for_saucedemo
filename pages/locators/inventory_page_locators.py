@@ -1,6 +1,7 @@
 class InventoryPageLocators:
     inventory_page_logo = '.header_label'
     shopping_cart = '.shopping_cart_link'
+    shopping_cart_counter = '.shopping_cart_badge'
     left_menu_button = '.bm-burger-button'
     button_to_close_left_menu = '.bm-cross-button'
     button_to_main_menu = '#inventory_sidebar_link'
@@ -19,6 +20,7 @@ class InventoryPageLocators:
     product_name_header = '.inventory_item_name '
     product_description = '.inventory_item_desc'
     product_price = '.inventory_item_price'
+    common_btn = 'button[class*="btn"][class*="btn_small"][class*="btn_inventory"]'
     button_add_to_cart = '.btn_primary'
     button_to_remove_from_cart = '.btn_secondary'
     twitter_logo_link = '.social_twitter a'

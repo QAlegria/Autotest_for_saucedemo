@@ -9,6 +9,7 @@ class InventoryPageParameters:
     arrow_image_name = 'arrow3x.4b825b78.svg'
 
     add_to_cart = 'Add to cart'
+    remove_from_cart = 'Remove'
 
     name_filter_az = 'Name (A to Z)'
     name_filter_za = 'Name (Z to A)'
