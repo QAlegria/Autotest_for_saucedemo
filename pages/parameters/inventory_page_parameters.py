@@ -15,4 +15,3 @@ class InventoryPageParameters:
     name_filter_za = 'Name (Z to A)'
     price_filter_lh = 'Price (low to high)'
     price_filter_hl = 'Price (high to low)'
-    terms_footer_text = '© 2025 Sauce Labs. All Rights Reserved. Terms of Service | Privacy Policy'

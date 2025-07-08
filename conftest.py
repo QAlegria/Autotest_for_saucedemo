@@ -1,10 +1,13 @@
 import pytest
 from playwright.sync_api import Page
+
+from pages.cart_page import CartPage
 from pages.home_page import HomePage
 from pages.inventory_page import InventoryPage
 from faker import Faker
 from pages.base_page import BasePage
 from pages.locators.home_page_locators import HomePageLocators
+from pages.page_swither import PageSwitcher
 from pages.parameters.credentials import Password, StandardUser, LockedOutUser, PerformanceGlitchUser, ProblemUser, ErrorUser, VisualUser
 from api.image_api import ImageApi
 from config import setting
@@ -15,19 +18,9 @@ from utils.network import NetworkWatcher
 def main_page(page):
     return HomePage(page)
 
-# Is this correct?
-@pytest.fixture()
-def auth_session_with_standard_user(page:Page):
-    page.goto(BasePage.base_url)
-    page.fill(HomePageLocators.username_field, StandardUser.standard_username)
-    page.fill(HomePageLocators.password_field, Password.password)
-    page.click(HomePageLocators.login_button)
-    network = NetworkWatcher(page)
-    page.wait_for_url(f'**{setting.INVENTORY_PAGE_URL}')
-    return page
 
 @pytest.fixture()
-def inventory_page_with_standard_user(page:Page):
+def inventory_page(page:Page):
     page.goto(BasePage.base_url)
     page.fill(HomePageLocators.username_field, StandardUser.standard_username)
     page.fill(HomePageLocators.password_field, Password.password)
@@ -39,8 +32,16 @@ def inventory_page_with_standard_user(page:Page):
     return InventoryPage(page, network)
 
 @pytest.fixture()
-def count_products():
-    return ImageApi()
+def cart_page(inventory_page, page_switcher):
+    page_switcher.switch_to_cart_page()
+    return CartPage(inventory_page.page)
+
+
+@pytest.fixture()
+def page_switcher(page):
+    return PageSwitcher(page)
+
+
 
 @pytest.fixture()
 def wrong_username():
@@ -85,4 +86,7 @@ def invalid_password():
 def get_image_api():
     return ImageApi()
 
+@pytest.fixture()
+def prod_list():
+    return []
 

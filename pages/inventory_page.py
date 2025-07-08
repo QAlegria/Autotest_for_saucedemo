@@ -1,7 +1,10 @@
-from functools import cached_property
+from functools import cached_property, partial
 
-from playwright.sync_api import expect, BrowserContext
+import allure
+from playwright.sync_api import expect
 from pages.base_page import BasePage
+from pages.components.footer_components import FooterComponents
+from pages.components.left_menu_component import LeftMenu
 from pages.parameters.inventory_page_parameters import InventoryPageParameters as Parameters
 from pages.locators.inventory_page_locators import InventoryPageLocators as Locators
 from utils.json_worker import JsonWorker
@@ -24,6 +27,10 @@ class InventoryPage(BasePage):
     def shopping_cart_image(self):
         return self.find(Locators.shopping_cart)
 
+    @allure.step("Click on shopping cart button")
+    def click_shopping_cart(self):
+        self.shopping_cart_image.click()
+
     def shopping_cart_image_is_displayed(self):
         expect(self.shopping_cart_image).to_be_visible()
 
@@ -34,6 +41,7 @@ class InventoryPage(BasePage):
     def shopping_cart_counter(self):
         return self.find(Locators.shopping_cart_counter)
 
+    @allure.step("Checking count shopping cart icon")
     def check_product_counter_icon_is(self, count):
         self.check_visibility_and_text(self.shopping_cart_counter, str(count))
 
@@ -50,71 +58,13 @@ class InventoryPage(BasePage):
         expect(self.shopping_cart_counter).not_to_be_attached()
 
 
-
     # Working with left menu
     @property
-    def left_menu_button(self):
-        return self.find(Locators.left_menu_button)
-
-    def left_menu_button_is_displayed(self):
-        expect(self.left_menu_button).to_be_visible()
-
-    def click_left_menu_button(self):
-        self.left_menu_button.click()
-
-    @property
-    def button_to_close_left_menu(self):
-        return self.find(Locators.button_to_close_left_menu)
-
-    def click_close_button(self):
-        self.button_to_close_left_menu.click()
-
-    @property
-    def button_to_main_menu(self):
-        return self.find(Locators.button_to_main_menu)
-
-    @property
-    def button_about(self):
-        return self.find(Locators.button_about)
-
-    @property
-    def logout_button(self):
-        return self.find(Locators.logout_button)
-
-    @property
-    def reset_button(self):
-        return self.find(Locators.reset_button)
-
-    def button_to_main_menu_is_displayed(self):
-        expect(self.button_to_main_menu).to_be_visible()
-
-    def click_button_to_main_menu(self):
-        self.button_to_main_menu.click()
-
-    def button_about_is_displayed(self):
-        expect(self.button_about).to_be_visible()
-
-    def click_button_about(self):
-        self.button_about.click()
-
-    def logout_button_is_displayed(self):
-        expect(self.logout_button).to_be_visible()
-
-    def click_logout_button(self):
-        self.logout_button.click()
-
-    def reset_button_is_displayed(self):
-        expect(self.reset_button).to_be_visible()
-
-    def click_reset_button(self):
-        self.reset_button.click()
+    def left_menu(self):
+        return LeftMenu(self.page)
 
 
-    def sort_is_displayed(self):
-        expect(self.product_sort).to_be_visible()
-
-    def click_sort(self):
-        self.product_sort.click()
+    # Product title label
 
     @property
     def header_of_product_title(self):
@@ -134,9 +84,12 @@ class InventoryPage(BasePage):
     def get_list_of_product_names(self):
         return self.all_product_names.all_inner_texts()
 
+    # Working with sort AZ
+    @allure.step("Checking that product on page is A to Z sorted")
     def check_products_is_a_to_z_sorted(self):
         assert ProductSort.a_to_z_sort(self.get_list_of_product_names()), f"{self.get_list_of_product_names()}\n Products on page isn't A to Z sorted"
 
+    @allure.step("Checking that product on page is Z to A sorted")
     def check_products_is_z_to_a_sorted(self):
         assert ProductSort.z_to_a_sort(self.get_list_of_product_names()), f"{self.get_list_of_product_names()}\n Products on page isn't Z to A sorted"
 
@@ -147,9 +100,12 @@ class InventoryPage(BasePage):
     def get_list_of_product_prices(self):
         return PriceHelper.get_float_prices(self.all_product_prices.all_inner_texts())
 
+    # Working with sort LH
+    @allure.step("Checking that product on page is low to high sorted")
     def check_low_to_high_products_sort(self):
         assert ProductSort.low_to_high_sort(self.get_list_of_product_prices()), f"{self.get_list_of_product_prices()}\n Products on page isn't A to Z sorted"
 
+    @allure.step("Checking that product on page is high to low sorted")
     def check_high_to_low_products_sort(self):
         assert ProductSort.high_to_low_sort(self.get_list_of_product_prices())
 
@@ -160,18 +116,26 @@ class InventoryPage(BasePage):
     def product_sort(self):
         return self.find(Locators.product_sort)
 
-    def click_product_sort(self):
+    def sort_is_displayed(self):
+        expect(self.product_sort).to_be_visible()
+
+    @allure.step("Click on sort button")
+    def click_sort(self):
         self.product_sort.click()
 
+    @allure.step("Select A to Z sort")
     def select_a_to_z_sort(self):
         self.product_sort.select_option(Locators.az_sort_selector)
 
+    @allure.step("Select Z to A sort")
     def select_z_to_a_sort(self):
         self.product_sort.select_option(Locators.za_sort_selector)
 
+    @allure.step("Select low to high sort")
     def select_low_to_high_sort(self):
         self.product_sort.select_option(Locators.low_to_high_sort_selector)
 
+    @allure.step("Select high to low sort")
     def select_high_to_low_sort(self):
         self.product_sort.select_option(Locators.high_to_low_sort_selector)
 
@@ -227,6 +191,7 @@ class InventoryPage(BasePage):
     def get_product_currency_by_index(self, index):
         return PriceHelper.get_currency(self.get_product_price_and_currency_text_by_index(index))
 
+    @allure.step("Checking that product on page is in expected product json")
     def check_product_by_index_is_in_json(self, index, json):
         product_json_filter = JsonWorker()
         product_json_filter.open_file(json)
@@ -242,6 +207,7 @@ class InventoryPage(BasePage):
                                        f"{self.get_product_price_by_index(index)}\n ,"
                                        f"{self.get_product_currency_by_index(index)}\n and product in JSON")
 
+    @allure.step("Checking that request of product image was called")
     def check_was_request_of_product_image_called_by_index(self, index):
         url = self.get_product_image_url_by_index(index)
         assert self.network.was_url_requested(url=url), 'The specified request was not requested'
@@ -259,8 +225,11 @@ class InventoryPage(BasePage):
     def button_add_to_cart_by_index_is_displayed(self, index):
         self.check_visibility_and_text(self.add_to_cart_element(index), Parameters.add_to_cart)
 
+    @allure.step("Clicking on product add to cart button and return name of added product")
     def click_button_add_to_card_product_by_index(self, index):
+        name_of_product = self.add_to_cart_element(index).locator(Locators.nearest_product_card).locator(Locators.product_name_header).inner_text()
         self.add_to_cart_element(index).click()
+        return name_of_product
 
     # Button remove from cart
     @property
@@ -273,73 +242,43 @@ class InventoryPage(BasePage):
     def button_remove_from_cart_by_index_is_displayed(self, index):
         self.check_visibility_and_text(self.remove_from_cart_element(index), Parameters.remove_from_cart)
 
+    @allure.step("Clicking on remove product button and return removed product name")
     def click_button_remove_from_cart_product_by_index(self, index):
+        name_of_product = self.remove_from_cart_element(index).locator(Locators.nearest_product_card).locator(Locators.product_name_header).inner_text()
         self.remove_from_cart_element(index).click()
+        print(name_of_product)
+        return name_of_product
 
     # Working with RandomItems
     @cached_property
     def get_random_times_for_add_iteration(self):
         return RandomItems.get_random_count(self.get_product_add_btn_count)
 
-    def add_one_random_product_to_cart(self):
-        RandomItems.select_one_random_item(self.get_product_add_btn_count, self.click_button_add_to_card_product_by_index)
+    @allure.step("Select one random item from page and add it to cart")
+    def add_one_random_product_to_cart(self, list_of_prod: list):
+        list_of_prod.append(RandomItems.select_one_random_item(self.get_product_add_btn_count, self.click_button_add_to_card_product_by_index))
+        print(list_of_prod)
 
-    def add_random_products_to_cart(self):
-        return RandomItems.repeat_random_amount_once_each(self.get_random_times_for_add_iteration, self.add_one_random_product_to_cart)
+    def add_random_products_to_cart(self, list_of_prod: list):
+        action = partial(self.add_one_random_product_to_cart, list_of_prod)
+        return RandomItems.repeat_random_amount_once_each(self.get_random_times_for_add_iteration, action)
 
     @cached_property
     def get_random_times_for_remove_iteration(self):
         return RandomItems.get_random_count(self.get_random_times_for_add_iteration)
 
-    def remove_one_random_product_from_cart(self):
-        RandomItems.select_one_random_item(self.get_product_remove_from_cart_btn_count, self.click_button_remove_from_cart_product_by_index)
+    @allure.step("Select one random item from page and remove it from cart")
+    def remove_one_random_product_from_cart(self, list_of_prod: list):
+        list_of_prod.remove(RandomItems.select_one_random_item(self.get_product_remove_from_cart_btn_count, self.click_button_remove_from_cart_product_by_index))
+        print(list_of_prod)
 
-    def remove_random_products_from_cart(self):
-        return RandomItems.repeat_random_amount_once_each(self.get_random_times_for_remove_iteration, self.remove_one_random_product_from_cart)
+    def remove_random_products_from_cart(self, list_of_prod: list):
+        action = partial(self.remove_one_random_product_from_cart, list_of_prod)
+        return RandomItems.repeat_random_amount_once_each(self.get_random_times_for_remove_iteration, action)
 
 
 
     # Social media and terms elements
     @property
-    def twitter_element(self):
-        return self.find(Locators.twitter_logo_link)
-
-    def twitter_is_displayed(self):
-        self.check_visibility_and_attribute(self.twitter_element, 'href', setting.TWITTER_LINK)
-
-    def click_and_check_twitter_is_opened(self):
-        twitter_page = self.open_new_tab_with_click(self.twitter_element)
-        twitter_page.wait_for_url(setting.X_TWITTER_LINK)
-
-
-    @property
-    def facebook_element(self):
-        return self.find(Locators.facebook_logo_link)
-
-    def facebook_is_displayed(self):
-        self.check_visibility_and_attribute(self.facebook_element, 'href', setting.FACEBOOK_LINK)
-
-    def click_and_check_facebook_is_opened(self):
-        facebook_page = self.open_new_tab_with_click(self.facebook_element)
-        facebook_page.wait_for_url(setting.FACEBOOK_LINK)
-
-    @property
-    def linkedin_element(self):
-        return self.find(Locators.linkedin_logo_link)
-
-    def linkedin_is_displayed(self):
-        self.check_visibility_and_attribute(self.linkedin_element, 'href', setting.LINKEDIN_LINK)
-
-    def click_and_check_linkedin_is_opened(self):
-        linkedin_page = self.open_new_tab_with_click(self.linkedin_element)
-        linkedin_page.wait_for_url(setting.LINKEDIN_LINK)
-
-
-    @property
-    def terms_footer(self):
-        return self.find(Locators.terms_footer)
-
-    def terms_footer_is_displayed(self):
-        self.check_visibility_and_text(self.terms_footer, Parameters.terms_footer_text)
-
-
+    def footer(self):
+        return FooterComponents(self.page)

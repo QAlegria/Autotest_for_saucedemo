@@ -1,29 +1,27 @@
+from pages.locators.components.common_components import CommonComponents
+
+
 class InventoryPageLocators:
-    inventory_page_logo = '.header_label'
-    shopping_cart = '.shopping_cart_link'
-    shopping_cart_counter = '.shopping_cart_badge'
-    left_menu_button = '.bm-burger-button'
-    button_to_close_left_menu = '.bm-cross-button'
-    button_to_main_menu = '#inventory_sidebar_link'
-    button_about = '#about_sidebar_link'
-    logout_button = '#logout_sidebar_link'
-    reset_button = '#reset_sidebar_link'
+    inventory_page_logo = CommonComponents.inventory_page_logo
+
+    shopping_cart = CommonComponents.shopping_cart
+    shopping_cart_counter = CommonComponents.shopping_cart_counter
+
     product_sort = '.product_sort_container'
     az_sort_selector = 'az'
     za_sort_selector = 'za'
     low_to_high_sort_selector = 'lohi'
     high_to_low_sort_selector = 'hilo'
-    header_of_product_title = '.title'
+
+    header_of_product_title = CommonComponents.title
+
     list_of_products = '.inventory_list'
+    nearest_product_card = 'xpath=ancestor::div[contains(@class,"inventory_item")]'
     product_container = '.inventory_item'
     product_image = '.inventory_item_img img'
-    product_name_header = '.inventory_item_name '
-    product_description = '.inventory_item_desc'
-    product_price = '.inventory_item_price'
-    common_btn = 'button[class*="btn"][class*="btn_small"][class*="btn_inventory"]'
+    product_name_header = CommonComponents.product_name_header
+    product_description = CommonComponents.product_description
+    product_price = CommonComponents.product_price
     button_add_to_cart = '.btn_primary'
-    button_to_remove_from_cart = '.btn_secondary'
-    twitter_logo_link = '.social_twitter a'
-    facebook_logo_link = '.social_facebook a'
-    linkedin_logo_link = '.social_linkedin a'
-    terms_footer = '.footer_copy'
+    button_to_remove_from_cart = CommonComponents.button_to_remove_from_cart
+

@@ -37,10 +37,6 @@ class BasePage:
         new_page.wait_for_load_state(wait_state)
         return new_page
 
-    # def list_of_elements(self, elements: Locator):
-    #     count = elements.count()
-    #     return [elements.nth(count).inner_text() for i in range(count)]
-
     def check_visibility_and_text(self, element, expected_text):
         expect(element).to_be_visible()
         expect(element).to_have_text(expected_text)
@@ -60,3 +56,6 @@ class BasePage:
 
     def check_static_image_request(self, method, image_name):
         self.network.check_image_response_body_by_method_url(method, image_name)
+
+    def check_url_is(self, url):
+        self.page.wait_for_url(url)

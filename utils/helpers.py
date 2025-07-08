@@ -1,7 +1,8 @@
 from playwright.sync_api import Locator
 import random
-from typing import Callable, Sequence
+from typing import Callable, Sequence, TypeVar
 
+T = TypeVar("T")
 
 class PriceHelper:
     @staticmethod
@@ -47,22 +48,24 @@ class ProductSort:
         return numbers == sorted(numbers, reverse=True)
 
 class RandomItems:
+
     @staticmethod
     def get_random_count(count):
         return random.randint(1, count)
 
     @staticmethod
-    def select_one_random_item(count, action: Callable[[int], None]):
-        # print(f'{count} is count of btn')
+    def select_one_random_item(count, action: Callable[[int], T]) ->T:
+        print(f'{count} is count of btn')
         if count == 0:
             raise ValueError("No items left to select")
         uniq_indexes = random.sample(range(count), 1)
-        # print(f'{uniq_indexes} is chosen item')
-        action(uniq_indexes[0])
+        item = uniq_indexes[0] + 1
+        print(f'{item} is chosen item')
+        return action(uniq_indexes[0])
 
     @staticmethod
     def repeat_random_amount_once_each(times, action: Callable[[], None]):
-        # print(times)
+        print(f'times of iteration {times}')
         if times == 0:
             raise ValueError("No items left to select")
         for i in range(times):
