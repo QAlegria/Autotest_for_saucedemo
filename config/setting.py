@@ -3,6 +3,9 @@ from pathlib import Path
 HOME_PAGE_URL = 'https://www.saucedemo.com/'
 INVENTORY_PAGE_URL = f'{HOME_PAGE_URL}inventory.html'
 CART_PAGE_URL = f'{HOME_PAGE_URL}cart.html'
+INVENTORY_ITEM_PAGE_URL = f'{HOME_PAGE_URL}inventory-item.html**'
+CHECK_OUT_FIRST_PAGE_URL = f'{HOME_PAGE_URL}checkout-step-one.html'
+
 STATIC_IMAGE_URL = f'{HOME_PAGE_URL}static/media/'
 TWITTER_LINK = 'https://twitter.com/saucelabs'
 X_TWITTER_LINK = 'https://x.com/saucelabs'
