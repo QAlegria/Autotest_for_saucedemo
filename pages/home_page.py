@@ -1,6 +1,7 @@
 import allure
 from playwright.sync_api import expect
 from pages.base_page import BasePage
+from pages.components.error_component import ErrorComponents
 from pages.locators.home_page_locators import HomePageLocators as Locators
 from pages.parameters.home_page_parameters import HomePageParameters as Parameters
 from utils.helpers import LoginDivideHelper
@@ -18,21 +19,38 @@ class HomePage(BasePage):
     def main_page_logo_has_text(self, text):
         self.check_visibility_and_text(self.main_page_logo, text)
 
+    # Working with input fields
+
     @property
     def username_text_field(self):
         return self.find(Locators.username_field)
 
     def username_text_field_is_displayed(self):
-        expect(self.username_text_field).to_be_visible()
-        expect(self.username_text_field).to_have_attribute('placeholder', 'Username')
+        self.check_visibility_and_attribute(self.username_text_field, 'placeholder', 'Username')
+
+    def username_text_field_has_value(self, username):
+        self.check_visibility_and_attribute(self.username_text_field,'value', username)
+
+    @allure.step("Filling username")
+    def enter_username(self, username):
+        self.username_text_field.click()
+        self.username_text_field.fill(username)
 
     @property
     def password_text_field(self):
         return self.find(Locators.password_field)
 
     def password_text_field_is_displayed(self):
-        expect(self.password_text_field).to_be_visible()
-        expect(self.password_text_field).to_have_attribute('placeholder', 'Password')
+        self.check_visibility_and_attribute(self.password_text_field,'placeholder', 'Password')
+
+    def password_text_field_has_value(self, password):
+        self.check_visibility_and_attribute(self.password_text_field,'value', password)
+
+    @allure.step("Filling password")
+    def enter_password(self, password):
+        self.password_text_field.click()
+        self.password_text_field.fill(password)
+
 
     @property
     def header_of_list_of_users(self):
@@ -66,62 +84,32 @@ class HomePage(BasePage):
         list_of_passwords = LoginDivideHelper.text_to_divide_from_page(self.element_list_of_accepted_pass)
         assert list_of_passwords == expected_list, "list_of_password is not matching with expected_list_of_passwords"
 
+    # Working with errors
     @property
-    def empty_error_field(self):
-        return self.find(Locators.empty_error_field)
-
-    @property
-    def not_empty_error_field(self):
-        return self.find(Locators.not_empty_error_field)
-
-    def empty_error_field_is_displayed(self):
-        self.check_visibility_and_text(self.empty_error_field, '')
-        expect(self.empty_error_field).to_have_css('background-color', Parameters.empty_error_color)
-        expect(self.not_empty_error_field).to_have_count(0)
+    def error(self):
+        return ErrorComponents(self.page)
 
     @allure.step("Checking empty username error")
     def checking_error_of_empty_username(self, text):
-        self.check_visibility_and_text(self.not_empty_error_field, text)
-        expect(self.not_empty_error_field).to_have_css('background-color', Parameters.error_color)
-
-    @property
-    def error_icons(self):
-        return self.find(Locators.error_icon)
+        self.error.checking_error_of_empty_field(text)
 
     def error_icons_is_displayed(self):
-        expect(self.error_icons).to_have_count(2)
-        self.check_visibility_list_of_elements(self.error_icons)
+        self.error.error_icons_is_displayed_and_have_count(2)
 
     @allure.step("Checking error text")
     def error_of_empty_password_has_text(self, text):
-        self.check_visibility_and_text(self.not_empty_error_field, text)
-        expect(self.not_empty_error_field).to_have_css('background-color', Parameters.error_color)
+        self.error.checking_error_of_empty_field(text)
 
     @allure.step("Checking error text")
     def error_of_invalid_credentials_has_text(self, text):
-        self.check_visibility_and_text(self.not_empty_error_field, text)
-        expect(self.not_empty_error_field).to_have_css('background-color', Parameters.error_color)
+        self.error.error_description_has_text(text)
 
-    def username_text_field_has_value(self, username):
-        self.check_visibility_and_attribute(self.username_text_field,'value', username)
-
-    def password_text_field_has_value(self, password):
-        self.check_visibility_and_attribute(self.password_text_field,'value', password)
 
     @allure.step("Clicking on login button")
     def click_login_button(self):
         self.find(Locators.login_button).click()
 
-    @allure.step("Filling username")
-    def enter_username(self, username):
-        self.username_text_field.click()
-        self.username_text_field.fill(username)
-
-    @allure.step("Filling password")
-    def enter_password(self, password):
-        self.password_text_field.click()
-        self.password_text_field.fill(password)
 
     @allure.step("Checking Inventory page after login")
     def new_page_after_login_has_url(self, url):
-        expect(self.page).to_have_url(url)
+        self.check_url_is(url)

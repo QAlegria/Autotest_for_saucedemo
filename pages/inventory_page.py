@@ -3,10 +3,10 @@ from functools import cached_property, partial
 import allure
 from playwright.sync_api import expect
 from pages.base_page import BasePage
-from pages.components.cart_and_page_components import ExtendedPageComponents
-from pages.components.footer_components import FooterComponents
+from pages.components.cart_and_page_component import ExtendedPageComponents
+from pages.components.footer_component import FooterComponents
 from pages.components.left_menu_component import LeftMenu
-from pages.components.product_components import ProductComponents, InventoryProducts
+from pages.components.product_component import InventoryProducts
 from pages.parameters.inventory_page_parameters import InventoryPageParameters as Parameters
 from pages.locators.inventory_page_locators import InventoryPageLocators as Locators
 from utils.json_worker import JsonWorker
@@ -47,23 +47,24 @@ class InventoryPage(BasePage):
     # Working with sort AZ
     @allure.step("Checking that product on page is A to Z sorted")
     def check_products_is_a_to_z_sorted(self):
-        assert ProductSort.a_to_z_sort(self.products.get_list_of_product_names()),\
-            f"{self.products.get_list_of_product_names()}\n Products on page isn't A to Z sorted"
+        assert ProductSort.a_to_z_sort(self.products.description.get_list_of_product_names()),\
+            f"{self.products.description.get_list_of_product_names()}\n Products on page isn't A to Z sorted"
 
     @allure.step("Checking that product on page is Z to A sorted")
     def check_products_is_z_to_a_sorted(self):
-        assert ProductSort.z_to_a_sort(self.products.get_list_of_product_names()),\
-            f"{self.products.get_list_of_product_names()}\n Products on page isn't Z to A sorted"
+        assert ProductSort.z_to_a_sort(self.products.description.get_list_of_product_names()),\
+            f"{self.products.description.get_list_of_product_names()}\n Products on page isn't Z to A sorted"
 
 
     # Working with sort LH
     @allure.step("Checking that product on page is low to high sorted")
     def check_low_to_high_products_sort(self):
-        assert ProductSort.low_to_high_sort(self.products.get_list_of_product_prices()), f"{self.products.get_list_of_product_prices()}\n Products on page isn't A to Z sorted"
+        assert ProductSort.low_to_high_sort(self.products.description.get_list_of_product_prices()),\
+            f"{self.products.description.get_list_of_product_prices()}\n Products on page isn't A to Z sorted"
 
     @allure.step("Checking that product on page is high to low sorted")
     def check_high_to_low_products_sort(self):
-        assert ProductSort.high_to_low_sort(self.products.get_list_of_product_prices())
+        assert ProductSort.high_to_low_sort(self.products.description.get_list_of_product_prices())
 
 
 
@@ -99,12 +100,12 @@ class InventoryPage(BasePage):
     # Working with RandomItems
     @cached_property
     def get_random_times_for_add_iteration(self):
-        return RandomItems.get_random_count(self.products.get_product_add_btn_count)
+        return RandomItems.get_random_count(self.products.add_button.get_product_add_btn_count)
 
     @allure.step("Select one random item from page and add it to cart")
     def add_one_random_product_to_cart(self, list_of_prod: list):
-        list_of_prod.append(RandomItems.select_one_random_item(self.products.get_product_add_btn_count,
-                                                               self.products.click_button_add_to_card_product_by_index))
+        list_of_prod.append(RandomItems.select_one_random_item(self.products.add_button.get_product_add_btn_count,
+                                                               self.products.add_button.click_button_add_to_card_product_by_index))
         print(list_of_prod)
 
     def add_random_products_to_cart(self, list_of_prod: list):
@@ -118,8 +119,8 @@ class InventoryPage(BasePage):
     @allure.step("Select one random item from page and remove it from cart")
     def remove_one_random_product_from_cart(self, list_of_prod: list):
         list_of_prod.remove(RandomItems.select_one_random_item(
-            self.products.get_product_remove_from_cart_btn_count,
-            self.products.click_button_remove_from_cart_product_by_index))
+            self.products.remove_button.get_product_remove_from_cart_btn_count,
+            self.products.remove_button.click_button_remove_from_cart_product_by_index))
         print(list_of_prod)
 
     def remove_random_products_from_cart(self, list_of_prod: list):
@@ -127,8 +128,15 @@ class InventoryPage(BasePage):
         return RandomItems.repeat_random_amount_once_each(self.get_random_times_for_remove_iteration, action)
 
     def click_on_random_product_on_page(self):
-        index = (RandomItems.get_random_count(self.products.get_product_item_count()) - 1)
-        self.products.click_on_selected_product(index)
+        index = (RandomItems.get_random_count(self.products.description.get_product_item_count()) - 1)
+        self.products.description.click_on_selected_product(index)
+
+    def get_random_product_name_locator(self):
+        index = (RandomItems.get_random_count(self.products.description.get_product_item_count()) - 1)
+        name = self.products.description.product_name_header_by_index(index).inner_text()
+        locator = self.products.description.product_name_header_by_index(index)
+        return locator, name
+
 
     # Social media and terms elements
     @property

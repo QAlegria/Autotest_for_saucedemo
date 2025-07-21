@@ -37,9 +37,11 @@ class BasePage:
         new_page.wait_for_load_state(wait_state)
         return new_page
 
-    def check_visibility_and_text(self, element, expected_text):
+    def check_visibility_and_text(self, element, expected_text, use_inner_text = False, use_regex = False):
+        if use_regex:
+            expected_text = re.compile(expected_text)
         expect(element).to_be_visible()
-        expect(element).to_have_text(expected_text)
+        expect(element).to_have_text(expected_text, use_inner_text = use_inner_text)
 
     def check_visibility_list_of_elements(self, list_of_elements):
         for element in range(list_of_elements.count()):

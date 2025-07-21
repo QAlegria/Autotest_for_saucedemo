@@ -2,8 +2,11 @@ import pytest
 from playwright.sync_api import Page
 
 from pages.cart_page import CartPage
+from pages.check_out_fisrt_page import CheckOutFirstPage
+from pages.check_out_second_page import CheckOutProducts, CheckOutSecondPage
 from pages.home_page import HomePage
 from pages.inventory_page import InventoryPage
+from pages.inventory_item_page import InventoryItemPage
 from faker import Faker
 from pages.base_page import BasePage
 from pages.locators.home_page_locators import HomePageLocators
@@ -36,6 +39,33 @@ def cart_page(inventory_page, page_switcher):
     page_switcher.switch_to_cart_page()
     return CartPage(inventory_page.page)
 
+@pytest.fixture()
+def check_out_first_page(cart_page, page_switcher):
+    page_switcher.switch_to_check_out_first_page()
+    return CheckOutFirstPage(cart_page.page)
+
+@pytest.fixture()
+def check_out_second_page(check_out_first_page, page_switcher):
+    page_switcher.switch_to_check_out_second_page()
+    return CheckOutSecondPage(check_out_first_page.page)
+
+
+
+@pytest.fixture()
+def random_inventory_item_locator_and_name(inventory_page):
+    product_locator, product_name = inventory_page.get_random_product_name_locator()
+    return product_locator, product_name
+
+@pytest.fixture()
+def random_inventory_item_page(inventory_page, page_switcher, random_inventory_item_locator_and_name):
+    product_locator, product_name = random_inventory_item_locator_and_name
+    page_switcher.switch_to_inventory_item_page(product_locator)
+    return InventoryItemPage(inventory_page.page)
+
+@pytest.fixture()
+def selected_random_product_name(random_inventory_item_locator_and_name):
+    product_locator, product_name = random_inventory_item_locator_and_name
+    return product_name
 
 @pytest.fixture()
 def page_switcher(page):
@@ -81,6 +111,21 @@ def valid_password():
 def invalid_password():
     fake = Faker()
     return fake.password()
+
+@pytest.fixture()
+def first_name():
+    fake = Faker()
+    return fake.first_name()
+
+@pytest.fixture()
+def last_name():
+    fake = Faker()
+    return fake.last_name()
+
+@pytest.fixture()
+def postal_code():
+    fake = Faker()
+    return fake.postalcode()
 
 @pytest.fixture()
 def get_image_api():

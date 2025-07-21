@@ -1,5 +1,5 @@
 class InventoryPageParameters:
-    inventory_page_header = 'Swag Labs'
+
     header_of_product_title_text = 'Products'
 
     add_to_cart = 'Add to cart'

@@ -53,5 +53,5 @@ class ExtendedPageComponents(PageComponents):
     def page_title(self):
         return self.find(Locators.title)
 
-    def header_of_product_title_has_text(self, text):
+    def check_header_of_product_title_has_text(self, text):
         self.check_visibility_and_text(self.page_title, text)

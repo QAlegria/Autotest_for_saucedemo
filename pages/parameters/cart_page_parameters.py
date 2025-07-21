@@ -1,5 +1,4 @@
 class CartPageParameters:
-    cart_logo = 'Swag Labs'
     your_cart_label = 'Your Cart'
     qty_label = 'QTY'
     description_label = 'Description'
