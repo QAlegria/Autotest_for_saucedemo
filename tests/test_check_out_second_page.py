@@ -18,7 +18,7 @@ def test_check_out_second_page_default_state(check_out_second_page):
     check_out_second_page.finish_btn_has_text(CheckOutSecondPageParameters.finish_text)
     check_footer_on_page(check_out_second_page)
 
-def test_integration_with_inventory_and_cart_page_add_and_remove_items(inventory_page, page_switcher, prod_list):
+def test_integration(inventory_page, page_switcher, prod_list):
     inventory_page.page_components.check_product_counter_icon_is_not_displayed()
     inventory_page.add_random_products_to_cart(prod_list)
     inventory_page.check_product_counter_icon_is_equals_random_selected_products()
@@ -31,3 +31,6 @@ def test_integration_with_inventory_and_cart_page_add_and_remove_items(inventory
     check_out_second_page.check_subtotal_price_is_summing_right()
     check_out_second_page.check_tax_is_counting_right()
     check_out_second_page.check_total_price_is_counting_right()
+    check_out_complete_page = page_switcher.switch_to_check_out_complete_page()
+    check_out_complete_page.complete_header_has_text('Thank you for your order!')
+    check_out_complete_page.complete_text_has_text('Your order has been dispatched, and will arrive just as fast as the pony can get there!')

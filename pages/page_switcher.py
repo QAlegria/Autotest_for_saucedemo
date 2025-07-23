@@ -1,6 +1,7 @@
 # from pages.check_out_fisrt_page import CheckOutFirstPage
-from pages.check_out_fisrt_page import CheckOutFirstPage
-from pages.check_out_second_page import CheckOutSecondPage
+from pages.checkout_complete_page import CheckOutCompletePage
+from pages.checkout_first_page import CheckOutFirstPage
+from pages.checkout_second_page import CheckOutSecondPage
 from pages.inventory_item_page import InventoryItemPage
 from pages.inventory_page import InventoryPage
 from pages.cart_page import CartPage
@@ -47,3 +48,9 @@ class PageSwitcher:
         self.page.wait_for_url(f"**{setting.CHECK_OUT_SECOND_PAGE_URL}")
         self.page.wait_for_load_state("load")
         return CheckOutSecondPage(self.page)
+
+    def switch_to_check_out_complete_page(self) -> CheckOutCompletePage:
+        self.page.click(NavigationComponentLocators.continue_btn)
+        self.page.wait_for_url(f"**{setting.CHECK_OUT_COMPLETE_PAGE_URL}")
+        self.page.wait_for_load_state("load")
+        return CheckOutCompletePage(self.page)

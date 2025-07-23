@@ -2,15 +2,15 @@ import pytest
 from playwright.sync_api import Page
 
 from pages.cart_page import CartPage
-from pages.check_out_fisrt_page import CheckOutFirstPage
-from pages.check_out_second_page import CheckOutProducts, CheckOutSecondPage
+from pages.checkout_first_page import CheckOutFirstPage
+from pages.checkout_second_page import CheckOutProducts, CheckOutSecondPage
 from pages.home_page import HomePage
 from pages.inventory_page import InventoryPage
 from pages.inventory_item_page import InventoryItemPage
 from faker import Faker
 from pages.base_page import BasePage
 from pages.locators.home_page_locators import HomePageLocators
-from pages.page_swither import PageSwitcher
+from pages.page_switcher import PageSwitcher
 from pages.parameters.credentials import Password, StandardUser, LockedOutUser, PerformanceGlitchUser, ProblemUser, ErrorUser, VisualUser
 from api.image_api import ImageApi
 from config import setting

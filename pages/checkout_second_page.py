@@ -10,7 +10,7 @@ from pages.components.footer_component import FooterComponents
 from pages.components.left_menu_component import LeftMenu
 from pages.components.navigation_component import BackAndContinue
 from pages.components.product_component import CheckOutProducts
-from pages.locators.check_out_second_page_locators import CheckOutSecondPageLocators as Locators
+from pages.locators.checkout_second_page_locators import CheckOutSecondPageLocators as Locators
 from utils.helpers import PriceHelper
 
 

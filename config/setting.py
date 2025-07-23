@@ -6,6 +6,7 @@ CART_PAGE_URL = f'{HOME_PAGE_URL}cart.html'
 INVENTORY_ITEM_PAGE_URL = f'{HOME_PAGE_URL}inventory-item.html**'
 CHECK_OUT_FIRST_PAGE_URL = f'{HOME_PAGE_URL}checkout-step-one.html'
 CHECK_OUT_SECOND_PAGE_URL = f'{HOME_PAGE_URL}checkout-step-two.html'
+CHECK_OUT_COMPLETE_PAGE_URL = f'{HOME_PAGE_URL}checkout-complete.html'
 
 LOGO = 'Swag Labs'
 

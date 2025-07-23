@@ -7,7 +7,7 @@ from pages.components.error_component import ErrorComponents
 from pages.components.footer_component import FooterComponents
 from pages.components.left_menu_component import LeftMenu
 from pages.components.navigation_component import BackAndContinue
-from pages.locators.check_out_first_page_locators import CheckOutFirstPageLocators as Locators
+from pages.locators.checkout_first_page_locators import CheckOutFirstPageLocators as Locators
 
 
 
