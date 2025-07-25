@@ -1,6 +1,7 @@
 import allure
 from playwright.sync_api import expect
 
+from config import setting
 from pages.base_page import BasePage
 from pages.components.cart_and_page_component import ExtendedPageComponents
 from pages.components.error_component import ErrorComponents
@@ -89,7 +90,6 @@ class CheckOutFirstPage(BasePage):
 
     def click_continue_btn(self):
         self.continue_btn.click()
-
 
     # Working with errors
     @property

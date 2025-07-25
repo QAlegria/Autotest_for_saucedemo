@@ -1,6 +1,6 @@
 from config import setting
 from pages.base_page import BasePage
-from pages.components.cart_and_page_component import PageComponents
+from pages.components.cart_and_page_component import ExtendedPageComponents
 from pages.components.footer_component import FooterComponents
 from pages.locators.checkout_complete_page_locators import CompleteCheckOutPageLocators as Locators
 
@@ -10,7 +10,7 @@ class CheckOutCompletePage(BasePage):
     # Working with logo, cart_icon, title
     @property
     def page_components(self):
-        return PageComponents(self.page)
+        return ExtendedPageComponents(self.page)
 
     # Working with complete container
     @property

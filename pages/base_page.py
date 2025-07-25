@@ -61,3 +61,4 @@ class BasePage:
 
     def check_url_is(self, url):
         self.page.wait_for_url(url)
+        self.page.wait_for_load_state("load")

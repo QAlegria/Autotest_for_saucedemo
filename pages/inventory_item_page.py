@@ -11,6 +11,7 @@ class InventoryItemPage(BasePage):
     def page_components(self):
         return PageComponents(self.page)
 
+
     # Working with left menu
     @property
     def left_menu(self):

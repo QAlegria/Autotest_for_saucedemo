@@ -176,6 +176,7 @@ class CheckOutSecondPage(BasePage):
     def click_finish_btn(self):
         self.finish_btn.click()
 
+
     # Social media and terms elements
     @property
     def footer(self):

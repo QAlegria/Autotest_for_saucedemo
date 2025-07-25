@@ -1,5 +1,6 @@
 import allure
 
+from config import setting
 from config.static_image_name import ImageName
 from pages.base_page import BasePage
 from pages.locators.components.cart_and_page_components import PageComponentsLocators as Locators
@@ -24,6 +25,8 @@ class PageComponents(BasePage):
     @allure.step("Click on shopping cart button")
     def click_shopping_cart(self):
         self.shopping_cart_icon.click()
+
+
 
     def shopping_cart_icon_is_displayed(self):
         expect(self.shopping_cart_icon).to_be_visible()
@@ -53,5 +56,5 @@ class ExtendedPageComponents(PageComponents):
     def page_title(self):
         return self.find(Locators.title)
 
-    def check_header_of_product_title_has_text(self, text):
+    def check_header_of_page_title_has_text(self, text):
         self.check_visibility_and_text(self.page_title, text)

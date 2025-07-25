@@ -5,7 +5,7 @@ from config import setting
 
 fake = Faker()
 
-def fill_check_out_form_with_random_person_info(page_with_delivery_form):
+def fill_check_out_form_with_random_person_info_on_page(page_with_delivery_form):
     first_name = fake.first_name()
     last_name = fake.last_name()
     postal_code = fake.postalcode()

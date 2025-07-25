@@ -1,5 +1,7 @@
 import allure
 from playwright.sync_api import expect, BrowserContext
+
+from config import setting
 from pages.base_page import BasePage
 from pages.components.cart_and_page_component import ExtendedPageComponents
 from pages.components.footer_component import FooterComponents
@@ -70,7 +72,6 @@ class CartPage(BasePage):
 
     def click_checkout_btn(self):
         self.checkout_btn.click()
-
 
     # Social media and terms elements
     @property

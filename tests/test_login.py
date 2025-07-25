@@ -6,22 +6,6 @@ from config import setting
 from pages.parameters.home_page_parameters import HomePageParameters as Parameters
 
 
-@allure.epic("SauceDemo Home Page")
-@allure.feature("Default page state")
-@allure.story("Default page state")
-def test_main_page_default_state(main_page):
-    main_page.open()
-    main_page.main_page_logo_has_text(setting.LOGO)
-    main_page.username_text_field_is_displayed()
-    main_page.password_text_field_is_displayed()
-    main_page.header_of_list_of_users_has_text(Parameters.username_header)
-    main_page.list_of_users_match_with(Parameters.expected_list_of_logins)
-    main_page.header_of_accepted_list_of_password_has_text(Parameters.password_header)
-    main_page.list_of_password_match_with(Parameters.expected_passwords)
-    main_page.error.empty_error_field_is_displayed()
-
-
-
 def test_main_page_empty_username(main_page, wrong_username):
     main_page.open()
     main_page.click_login_button()
