@@ -1,5 +1,6 @@
 import allure
 
+from api.api_requests import RequestApi
 from config import setting
 from pages.base_page import BasePage
 from pages.locators.components.footer_locators import FooterLocators as Locators
@@ -16,6 +17,8 @@ class FooterComponents(BasePage):
 
     @allure.step("Click to twitter logo and check is it opened")
     def click_and_check_twitter_is_opened(self):
+        assert RequestApi.get_request(
+            setting.X_TWITTER_LINK).status_code == 200, f"The {setting.X_TWITTER_LINK} page is not available"
         twitter_page = self.open_new_tab_with_click(self.twitter_element)
         twitter_page.wait_for_url(setting.X_TWITTER_LINK)
 
@@ -29,6 +32,8 @@ class FooterComponents(BasePage):
 
     @allure.step("Click to facebook logo and check is it opened")
     def click_and_check_facebook_is_opened(self):
+        assert RequestApi.get_request(
+            setting.FACEBOOK_LINK).status_code == 200, f"The {setting.FACEBOOK_LINK} page is not available"
         facebook_page = self.open_new_tab_with_click(self.facebook_element)
         facebook_page.wait_for_url(setting.FACEBOOK_LINK)
 
@@ -41,6 +46,8 @@ class FooterComponents(BasePage):
 
     @allure.step("Click to linkedin logo and check is it opened")
     def click_and_check_linkedin_is_opened(self):
+        assert RequestApi.get_request(
+            setting.LINKEDIN_LINK).status_code == 200, f"The {setting.LINKEDIN_LINK} page is not available"
         linkedin_page = self.open_new_tab_with_click(self.linkedin_element)
         linkedin_page.wait_for_url(setting.LINKEDIN_LINK)
 

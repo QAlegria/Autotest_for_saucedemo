@@ -15,9 +15,9 @@ from faker import Faker
 from pages.base_page import BasePage
 from pages.locators.home_page_locators import HomePageLocators
 from pages.parameters.credentials import Password, StandardUser, LockedOutUser, PerformanceGlitchUser, ProblemUser, ErrorUser, VisualUser
-from api.image_api import ImageApi
 from config import setting
 from utils.network import NetworkWatcher
+from utils.page_artifacts import save_page_artifacts
 
 
 @pytest.fixture()
@@ -129,9 +129,6 @@ def postal_code():
     fake = Faker()
     return fake.postalcode()
 
-@pytest.fixture()
-def get_image_api():
-    return ImageApi()
 
 @pytest.fixture()
 def prod_list():
@@ -142,53 +139,7 @@ def prod_list():
 def pytest_runtest_makereport(item, call):
     outcome = yield
     report = outcome.get_result()
-
     if report.when == "call" and report.failed:
         page = item.funcargs.get("page", None)
         if page:
-            for idx, p in enumerate(page.context.pages, start=1):
-                try:
-                    screenshot = p.screenshot(full_page=True)
-                    allure.attach(
-                        screenshot,
-                        name=f"Screenshot tab {idx}",
-                        attachment_type=allure.attachment_type.PNG
-                    )
-
-                    html = p.content()
-                    allure.attach(
-                        html,
-                        name=f"HTML tab {idx}",
-                        attachment_type=allure.attachment_type.HTML
-                    )
-
-                except Exception as e:
-                    tb = traceback.format_exc()
-                    url = "<unknown>"
-                    title = "<unknown>"
-
-                    try:
-                        url = p.url
-                    except Exception:
-                        pass
-
-                    try:
-                        title = p.title()
-                    except Exception:
-                        pass
-
-                    info = (
-                        f"Exception when save tab {idx}\n"
-                        f"URL: {url}\n"
-                        f"Title: {title}\n"
-                        f"Exception: {repr(e)}\n\n"
-                        f"Traceback:\n{tb}"
-                    )
-
-                    allure.attach(info,
-                                  name=f"Exception when save tab {idx}",
-                                  attachment_type=allure.attachment_type.TEXT
-                                  )
-
-
-
+            save_page_artifacts(page)
